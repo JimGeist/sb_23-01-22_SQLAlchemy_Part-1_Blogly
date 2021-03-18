@@ -25,6 +25,7 @@ class User(db.Model):
     first_name = db.Column(db.String(25),
                            nullable=False)
 
+    # last_name is nullable -- Cher, Prince, Beyoncé
     last_name = db.Column(db.String(25),
                           nullable=True)
 
@@ -34,4 +35,10 @@ class User(db.Model):
     def __repr__(self):
         """Show info about user."""
 
-        return f"<Blogly User#{self.id} first name: {self.first_name} last name: {self.last_name} image url: {self.image_url} >"
+        return f"<Blogly #{self.id} {self.first_name} {self.last_name} image url: {self.image_url} >"
+
+    def get_full_name(self):
+        """Get the full name """
+        full_name = f"{self.first_name} {self.last_name}"
+
+        return full_name.strip()
