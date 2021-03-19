@@ -1,6 +1,14 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 img{
     margin-right: 1.00rem;
     max-width: 10.00rem;
+    float: left;
+}
+
+.div-float {
     float: left;
 }
 
@@ -30,6 +38,17 @@ img{
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 2.00rem;
     font-weight: bold;
+}
+
+.post-content {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 5.00rem;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.post-byline {
+    display: block;
 }
 
 .btn {
@@ -62,4 +81,8 @@ img{
 
 .dsp-inline {
     display: inline;
+}
+
+.dsp-block {
+    display: block;
 }
