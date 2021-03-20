@@ -1,6 +1,5 @@
 {% extends '_base.html' %}
 {% block content %}
-<h1>Edit Post</h1>
 <form action="/posts/{{ post.id }}/edit" method="POST">
   <label class="lbl" for="post-title">Title</label>
   <input class="inp" name="post-title" value="{{ post.title }}">

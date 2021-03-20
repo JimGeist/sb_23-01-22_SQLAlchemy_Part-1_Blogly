@@ -60,7 +60,8 @@ class BloglyUserTests(TestCase):
             self.assertIn(self.user.image_url, html)
 
             self.assertIn('Edit</button>', html)
-            self.assertIn('Delete', html)
+            self.assertIn('"Delete"', html)
+            self.assertNotIn('disabled value="Delete"', html)
             self.assertIn('Add Post', html)
             # 'Posts' text only appears when user has posts
             self.assertNotIn('Posts</span>', html)
@@ -127,50 +128,11 @@ class BloglyPostTests(TestCase):
         """Add blogly user and post."""
 
         self.user_id = 1
-        # db_user = User.query.get(self.user_id)
-
-        # self.user = db_user
 
         self.user = User.query.get(self.user_id)
 
         self.post_id = self.user.posts[0].user_id
         self.post = Post.query.get(self.post_id)
-
-        # db_post = Post(title="Screw You Guys. . .", content=". . . I am going home!",
-        #                 created_at="2021-03-09 16:00", user_id=1)
-
-        # db.session.add(new_post)
-        # db.session.commit()
-
-        # self.post_id = new_post.id
-        # self.post = new_post
-
-    # def setUp(self):
-    #     """Add blogly user and post."""
-
-    #     db.session.rollback()
-
-    #     Post.query.delete()
-    #     db.session.commit()
-    #     User.query.delete()
-    #     db.session.commit()
-
-    #     new_user = User(first_name="Eric",
-    #                     last_name="Cartman", image_url="http://ficticiouswebsite.com/namtraccire.jpg")
-
-    #     db.session.add(new_user)
-    #     db.session.commit()
-
-    #     self.user_id = new_user.id
-    #     self.user = new_user
-
-    #     new_post = Post(title="Screw You Guys. . .", content=". . . I am going home!",
-    #                     created_at="2021-03-09 16:00", user_id=1)
-    #     db.session.add(new_post)
-    #     db.session.commit()
-
-    #     self.post_id = new_post.id
-    #     self.post = new_post
 
     def tearDown(self):
         """Clean up any fouled transaction."""
@@ -188,7 +150,7 @@ class BloglyPostTests(TestCase):
             self.assertIn(self.user.image_url, html)
 
             self.assertIn('Edit</button>', html)
-            self.assertIn('Delete', html)
+            self.assertIn('disabled value="Delete"', html)
             self.assertIn('Add Post', html)
             # 'Posts' text only appears when user has posts
             self.assertIn('Posts</span>', html)

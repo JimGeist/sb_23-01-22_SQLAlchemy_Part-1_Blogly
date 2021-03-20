@@ -60,6 +60,22 @@ img{
     border-radius: 0.75rem;
 }
 
+.flashes {
+    list-style-type: none;
+}
+
+.warning {
+    color: orange;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.okay {
+    color: rgb(0, 180, 0);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
 .btn-edit {
     background-color: #000080;
     color: #CCC;
@@ -75,6 +91,12 @@ img{
     color: #CCC;
 }
 
+input[type="submit"]:disabled, 
+button:disabled {
+    background-color: #F0F0F0;
+    color: #AAA;
+}
+  
 .dsp-hide {
     display: none;
 }

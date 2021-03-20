@@ -1,6 +1,5 @@
 {% extends '_base.html' %}
 {% block content %}
-<h1>Edit Blogly {{ user.first_name }} {{ user.last_name }}</h1>
 <form action="/users/{{ user.id }}/edit" method="POST">
   <label class="lbl" for="first-name">First Name</label>
   <input class="inp" name="first-name" placeholder="Enter a first name" value="{{ user.first_name }}">

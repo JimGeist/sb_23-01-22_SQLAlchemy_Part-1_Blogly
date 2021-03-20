@@ -1,6 +1,5 @@
 {% extends '_base.html' %}
 {% block content %}
-<h1>Blogly Users</h1>
 <ul class="users-list">
   {% for user in users %}
   <li><a href="/users/{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</a></li>

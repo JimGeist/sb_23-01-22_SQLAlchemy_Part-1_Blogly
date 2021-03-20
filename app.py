@@ -2,7 +2,7 @@
 
 from flask import Flask, request, redirect, render_template, redirect, flash, session
 # from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, db_add_user, db_edit_user, db_add_post, db_edit_post
 from datetime import datetime
 
 app = Flask(__name__)
@@ -18,21 +18,6 @@ app.config['SECRET_KEY'] = "SECRET!"
 connect_db(app)
 
 
-def change_occurred(from_vals, to_vals):
-    """ compares lists of from and to values to ensure a change occurred """
-
-    if (len(from_vals) == len(to_vals)):
-        for fr, to in zip(from_vals, to_vals):
-            if (fr != to):
-                return True
-        # all from and to values matched. NO change occurred
-        return False
-    else:
-        # The lengths of the lists should match.
-        # For now, return True
-        return True
-
-
 @app.route("/")
 def blogly_home():
     """ Blogly Home Page """
@@ -46,14 +31,14 @@ def list_users():
 
     db_users = User.query.all()
 
-    return render_template("list_users.html", users=db_users)
+    return render_template("list_users.html", headline="Blogly Users", users=db_users)
 
 
 @app.route("/users/new")
 def add_user_form():
     """ Blogly Add New User Form """
 
-    return render_template("add_user.html")
+    return render_template("add_user.html", headline="Add New Blogly User")
 
 
 @app.route("/users/new", methods=["POST"])
@@ -65,10 +50,10 @@ def add_user_process():
     last_name = request.form["last-name"]
     image_url = request.form["image-url"]
 
-    new_user = User(first_name=first_name.strip(),
-                    last_name=last_name.strip(), image_url=image_url.strip())
-    db.session.add(new_user)
-    db.session.commit()
+    msg = db_add_user(first_name, last_name, image_url)
+
+    flash(msg["text"], msg["severity"])
+
     return redirect("/users")
 
 
@@ -82,9 +67,9 @@ def view_user(user_id):
     # parameter is used by SQL Alchemy and they typically happen
     # on records with nulls.
 
-    # ??? should put somthing in place to disable delete
-    # when posts exist
-    return render_template("view_user.html", user=db_user)
+    allow_delete = True if len(db_user.posts) == 0 else False
+    return render_template("view_user.html", headline="Blogly User",
+                           user=db_user, allow_delete=allow_delete)
 
 
 @app.route("/users/<int:user_id>/edit")
@@ -93,26 +78,23 @@ def edit_user(user_id):
 
     db_user = User.query.get_or_404(user_id)
 
-    return render_template("edit_user.html", user=db_user)
+    return render_template("edit_user.html",
+                           headline=f"Edit Blogly {db_user.get_full_name()}",
+                           user=db_user)
 
 
 @app.route("/users/<int:user_id>/edit", methods=["POST"])
 def edit_user_process(user_id):
     """ Process the edit of a single Blogly user """
 
-    # db_user = User.query.get_or_404(user_id)
-    db_user = User.query.get(user_id)
-
     # extract form data, edit, commit, then redirect to /users
-    f_name = request.form["first-name"].strip()
-    l_name = request.form["last-name"].strip()
-    url = request.form["image-url"].strip()
+    first_name = request.form["first-name"].strip()
+    last_name = request.form["last-name"].strip()
+    image_url = request.form["image-url"].strip()
 
-    if (change_occurred([db_user.first_name, db_user.last_name, db_user.image_url], [f_name, l_name, url])):
-        db_user.first_name = f_name.strip()
-        db_user.last_name = l_name.strip()
-        db_user.image_url = url.strip()
-        db.session.commit()
+    msg = db_edit_user(user_id, first_name, last_name, image_url)
+
+    flash(msg["text"], msg["severity"])
 
     return redirect(f"/users/{user_id}")
 
@@ -137,7 +119,9 @@ def view_post(post_id):
     full_name = db_post.user.get_full_name()
     created_date = datetime.strftime(
         db_post.created_at, "%a %b %d, %Y %I:%M %p").replace(" 0", " ")
-    return render_template("view_post.html", post=db_post, user_full_name=full_name, created=created_date)
+    return render_template("view_post.html",
+                           headline=db_post.title,
+                           post=db_post, user_full_name=full_name, created=created_date)
 
 
 @app.route("/users/<int:user_id>/posts/new")
@@ -147,7 +131,8 @@ def add_post_form(user_id):
     user_data["id"] = user_id
     user_data["name"] = User.query.get(user_id).get_full_name()
 
-    return render_template("add_post.html", user=user_data)
+    return render_template("add_post.html", headline=f"Add Post for { user_data['name'] }",
+                           user=user_data)
 
 
 @app.route("/users/<int:user_id>/posts/new", methods=["POST"])
@@ -159,11 +144,10 @@ def add_post_process(user_id):
     post_title = request.form["post-title"]
     post_content = request.form["post-content"]
 
-    new_post = Post(title=post_title.strip(),
-                    content=post_content.strip(),
-                    user_id=user_id)
-    db.session.add(new_post)
-    db.session.commit()
+    msg = db_add_post(post_title, post_content, user_id)
+
+    flash(msg["text"], msg["severity"])
+
     return redirect(f"/users/{ user_id }")
 
 
@@ -177,28 +161,23 @@ def edit_post(post_id):
     post_data["content"] = db_post.content
     post_data["user_id"] = db_post.user_id
 
-    return render_template("edit_post.html", post=post_data)
+    return render_template("edit_post.html", headline="Add New Blogly User", post=post_data)
 
 
 @app.route("/posts/<int:post_id>/edit", methods=["POST"])
 def edit_post_process(post_id):
     """ Process the edit of a post. Return to users/<user_id> """
 
-    # db_user = User.query.get_or_404(user_id)
-    db_post = Post.query.get_or_404(post_id)
-
-    user_id = db_post.user.id
     # extract form data, commit, then redirect to /users
     f_title = request.form["post-title"].strip()
     f_content = request.form["post-content"].strip()
 
-    if (change_occurred([db_post.title, db_post.content], [f_title, f_content])):
-        db_post.id = post_id
-        db_post.title = f_title
-        db_post.content = f_content
-        db.session.commit()
+    # msg will also include a field for the user_id for routing.
+    msg = db_edit_post(post_id, f_title, f_content)
 
-    return redirect(f"/users/{user_id}")
+    flash(msg["text"], msg["severity"])
+
+    return redirect(f"/users/{msg['user_id']}")
 
 
 @app.route("/posts/<int:post_id>/delete", methods=["POST"])

@@ -1,6 +1,5 @@
 {% extends '_base.html' %}
 {% block content %}
-<h1>{{ post.title }}</h1>
 <p class="">{{ post.content }} </p>
 <span class="post-byline">by {{ user_full_name }} at {{ created }}</span>
 <a href="/users/{{ post.user_id }}"><button class="btn">Cancel</button></a>
