@@ -1,0 +1,12 @@
+{% extends '_base.html' %}
+{% block content %}
+<ul class="">
+  {% for post in posts %}
+  <li><a href="/posts/{{ post.id }}">{{ post.title }}</a></li>
+  {% endfor %}
+</ul>
+<a href="/tags/{{ tag_id }}/edit"><button class="btn btn-edit">Edit Tag</button></a>
+<form class="dsp-inline" action="/tags/{{ tag_id }}/delete" method="post">
+  <input type="submit" class="btn btn-delete" {{ disable_delete }}value="Delete Tag">
+</form>
+{% endblock %}

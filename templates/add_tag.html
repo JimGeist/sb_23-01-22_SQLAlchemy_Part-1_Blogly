@@ -1,0 +1,10 @@
+{% extends '_base.html' %}
+{% block content %}
+<form action="/tags/new" method="POST">
+  <label class="lbl" for="tag-name">Title</label>
+  <input class="inp" name="tag-name" required placeholder="Enter a name for the tag">
+  <input type="submit" class="dsp-inline btn btn-save" value="Add"></button>
+</form>
+<a href="/tags"><button class="btn">Cancel</button></a>
+
+{% endblock %}

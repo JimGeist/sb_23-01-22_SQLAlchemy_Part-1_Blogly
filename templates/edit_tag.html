@@ -1,0 +1,9 @@
+{% extends '_base.html' %}
+{% block content %}
+<form class="dsp-inline" action="/tags/{{ tag.id }}/edit" method="POST">
+  <label class="lbl" for="tag-name">Name</label>
+  <input class="inp" name="tag-name" value="{{ tag.name }}">
+  <input type="submit" class="dsp-inline btn btn-save" value="Save">
+</form>
+<a href="/tags/{{ tag.id }}"><button class="btn">Cancel</button></a>
+{% endblock %}

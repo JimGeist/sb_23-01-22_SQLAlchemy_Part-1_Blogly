@@ -5,6 +5,16 @@
   <input class="inp" name="post-title" value="{{ post.title }}">
   <label class="lbl" for="post-content">Content</label>
   <textarea rows="5" class="inp" name="post-content" wrap="hard">{{ post.content }}</textarea>
+
+  {% if tags %}
+  <div class="" id="div-tags">
+    {% for tag in tags %}
+    <input type="checkbox" name="tag-{{ tag.id }}" id="tag-{{ tag.id }}" value="{{ tag.name }}" {{ tag.checked }}>
+    <label class="" for="{{ tag.name }}">{{ tag.name }}</label>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <input type="submit" class="dsp-inline btn btn-save" value="Save">
 </form>
 <a href="/users/{{ post.user_id }}"><button class="btn">Cancel</button></a>

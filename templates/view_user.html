@@ -6,11 +6,7 @@
     <a href="/users"><button class="btn">Cancel</button></a>
     <a href="/users/{{ user.id }}/edit"><button class="btn btn-edit">Edit</button></a>
     <form class="dsp-inline" action="/users/{{ user.id }}/delete" method="post">
-        {% if allow_delete %}
-        <input type="submit" class="btn btn-delete" value="Delete">
-        {% else %}
-        <input type="submit" class="btn btn-delete" disabled value="Delete">
-        {% endif %}
+        <input type="submit" class="btn btn-delete" {{ disable_delete }}value="Delete">
     </form>
     {% if user.posts %}
     <span class="view-user-name">Posts</span>
